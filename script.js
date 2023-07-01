@@ -1,6 +1,5 @@
 let map, geocoder, resultContainer, action;
 function initializeMap() {
-    console.log(navigator.language)
     let mapProperties = {
         zoom: 8,
         center: { lat: 50.625898, lng: 26.200207 }
@@ -48,6 +47,7 @@ function geocodeCoordinates() {
     geocoder.geocode({ location: location })
         .then((response) => {
             const { results } = response;
+
             if (results[0]) {
                 const formattedAddress = results[0].formatted_address;
                 const resultText = `Address: ${formattedAddress}\nCoordinates: ${location.lat}, ${location.lng}`;
@@ -84,20 +84,17 @@ function autocompleteAddress() {
     });
 
     autocomplete.addListener("place_changed", () => {
-        console.log("changed")
+        action.innerText = "Auto complete address"
         infowindow.close();
         marker.setVisible(false);
 
         const place = autocomplete.getPlace();
 
         if (!place.geometry || !place.geometry.location) {
-            window.alert(
-                "No details available for input: '" + place.name + "'"
-            );
+            resultContainer.innerText = "No details available for input: '" + place.name + "'";
             return;
         }
 
-        // If the place has a geometry, then present it on a map.
         if (place.geometry.viewport) {
             map.fitBounds(place.geometry.viewport);
         } else {
@@ -105,11 +102,13 @@ function autocompleteAddress() {
             map.setZoom(17);
         }
 
+        const resultText = `Name: ${place.name}\nAddress: ${place.formatted_address}\nCoordinates: ${place.geometry.location.lat()}, ${place.geometry.location.lng()}`;
+        resultContainer.innerText = resultText;
+
         marker.setPosition(place.geometry.location);
         marker.setVisible(true);
         infowindowContent.children["place-name"].textContent = place.name;
-        infowindowContent.children["place-address"].textContent =
-            place.formatted_address;
+        infowindowContent.children["place-address"].textContent = place.formatted_address;
         infowindow.open(map, marker);
     })
 }
