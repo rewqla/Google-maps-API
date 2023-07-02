@@ -1,4 +1,5 @@
-let map, geocoder, resultContainer, action, infoWindow;
+let map, geocoder, resultContainer, action, infoWindow, markers = [];
+
 function initializeMap() {
     let mapProperties = {
         zoom: 8,
@@ -9,6 +10,11 @@ function initializeMap() {
     geocoder = new google.maps.Geocoder();
     resultContainer = document.getElementById("result_container");
     action = document.getElementById("action");
+
+    map.addListener("click", (event) => {
+        console.log(event)
+        addMarker(event.latLng);
+    });
 
     autocompleteAddress();
 }
@@ -142,9 +148,22 @@ function currentLocation() {
             }
         );
     } else {
-        // Browser doesn't support Geolocation
         resultContainer.innerText = "Error: Your browser doesn't support geolocation.";
-
     }
 }
 
+function addMarker(location) {
+    const marker = new google.maps.Marker({
+        position: location,
+        map: map
+    });
+
+    markers.push(marker);
+    map.setCenter(location);
+    map.setZoom(14)
+
+    marker.addListener("click", () => {
+        marker.setMap(null);
+        markers = markers.filter((m) => m !== marker);
+    });
+}
