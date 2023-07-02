@@ -1,4 +1,4 @@
-let map, geocoder, resultContainer, action;
+let map, geocoder, resultContainer, action, infoWindow;
 function initializeMap() {
     let mapProperties = {
         zoom: 8,
@@ -73,10 +73,10 @@ function autocompleteAddress() {
     const autocomplete = new google.maps.places.Autocomplete(autoAddress, options);
     autocomplete.bindTo("bounds", map);
 
-    const infowindow = new google.maps.InfoWindow();
+    infoWindow = new google.maps.InfoWindow();
     const infowindowContent = document.getElementById("infowindow-content");
 
-    infowindow.setContent(infowindowContent);
+    infoWindow.setContent(infowindowContent);
 
     const marker = new google.maps.Marker({
         map,
@@ -85,7 +85,7 @@ function autocompleteAddress() {
 
     autocomplete.addListener("place_changed", () => {
         action.innerText = "Auto complete address"
-        infowindow.close();
+        infoWindow.close();
         marker.setVisible(false);
 
         const place = autocomplete.getPlace();
@@ -109,6 +109,42 @@ function autocompleteAddress() {
         marker.setVisible(true);
         infowindowContent.children["place-name"].textContent = place.name;
         infowindowContent.children["place-address"].textContent = place.formatted_address;
-        infowindow.open(map, marker);
+        infoWindow.open(map, marker);
     })
 }
+
+function currentLocation() {
+    infoWindow = new google.maps.InfoWindow();
+
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+            (position) => {
+                console.log(position)
+                const pos = {
+                    lat: position.coords.latitude,
+                    lng: position.coords.longitude,
+                };
+
+                const marker = new google.maps.Marker({
+                    position: pos,
+                    map: map
+                });
+
+                infoWindow.setPosition(pos);
+                infoWindow.setContent("Your current location ");
+                infoWindow.open(map, marker);
+                map.setCenter(pos);
+                map.setZoom(15);
+
+            },
+            () => {
+                resultContainer.innerText = "Error: The Geolocation service failed.";
+            }
+        );
+    } else {
+        // Browser doesn't support Geolocation
+        resultContainer.innerText = "Error: Your browser doesn't support geolocation.";
+
+    }
+}
+
