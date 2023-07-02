@@ -12,7 +12,6 @@ function initializeMap() {
     action = document.getElementById("action");
 
     map.addListener("click", (event) => {
-        console.log(event)
         addMarker(event.latLng);
     });
 
@@ -166,4 +165,18 @@ function addMarker(location) {
         marker.setMap(null);
         markers = markers.filter((m) => m !== marker);
     });
+}
+
+function calculateDistance() {
+    action.innerText = "Distance between two points"
+
+    if (markers.length == 2) {
+        const distanceInMeters = google.maps.geometry.spherical.computeDistanceBetween(markers[0].getPosition(), markers[1].getPosition());
+        const distanceInKilometers = (distanceInMeters / 1000).toFixed(2);
+
+        resultContainer.innerText = "Distance between two markers is " + distanceInKilometers + " km";
+    }
+    else {
+        resultContainer.innerText = "You need to have two points";
+    }
 }

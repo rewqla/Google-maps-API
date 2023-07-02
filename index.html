@@ -39,7 +39,7 @@
         </div>
       </div>
     </div>
-
+    <hr>
     <div class="form-group">
       <h1>Geocode coordinates to an address </h1>
       <label for="coordinates">Enter coordinates:</label>
@@ -50,7 +50,7 @@
         </div>
       </div>
     </div>
-
+    <hr>
     <div class="form-group">
       <h1>Search an address for autocomplete </h1>
       <label for="auto-address">Enter the address:</label>
@@ -58,21 +58,27 @@
         <input class="form-control" id="auto-address" placeholder="Enter the address">
       </div>
     </div>
-
+    <hr>
     <div class="form-group">
       <h1>Show current user location </h1>
       <button type="button" class="btn btn-primary" onclick="currentLocation()">Show my location</button>
     </div>
-
+    <hr>
     <div class="form-group">
       <h1>Add and Remove Markers on a Map</h1>
       <h3>Click on the map to add a new marker or click on the marker to remove it</h3>
+    </div>
+    <hr>
+    <div class="form-group">
+      <h1>Distance beetwen two points</h1>
+      <h3>This function avaliable only if you have two points</h3>
+      <button type="button" class="btn btn-primary" onclick="calculateDistance()">Calculate distance</button>
     </div>
   </div>
 
   <script src="script.js"></script>
   <script
-    src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places&callback=initializeMap"></script>
+    src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places,geometry&callback=initializeMap"></script>
 
 
 </body>
