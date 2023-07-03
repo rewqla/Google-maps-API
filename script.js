@@ -124,7 +124,6 @@ function currentLocation() {
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(
             (position) => {
-                console.log(position)
                 const pos = {
                     lat: position.coords.latitude,
                     lng: position.coords.longitude,
@@ -168,7 +167,7 @@ function addMarker(location) {
 }
 
 function calculateDistance() {
-    action.innerText = "Distance between two points"
+    action.innerText = "Distance between two points";
 
     if (markers.length == 2) {
         const distanceInMeters = google.maps.geometry.spherical.computeDistanceBetween(markers[0].getPosition(), markers[1].getPosition());
@@ -180,3 +179,38 @@ function calculateDistance() {
         resultContainer.innerText = "You need to have two points";
     }
 }
+
+function getDirection() {
+    action.innerText = "Direction between two points";
+
+    if (markers.length == 2) {
+        let directionsService = new google.maps.DirectionsService();
+        let directionsRenderer = new google.maps.DirectionsRenderer();
+        directionsRenderer.setMap(map);
+
+        const route = {
+            origin: markers[0].getPosition(),
+            destination: markers[1].getPosition(),
+            travelMode: 'DRIVING'
+        }
+
+        directionsService.route(route, (response, status) => {
+            if (status !== 'OK') {
+                resultContainer.innerText = 'Directions request failed due to ' + status;
+                return;
+            } else {
+                directionsRenderer.setDirections(response);
+                const directionsData = response.routes[0].legs[0];
+
+                const distance = directionsData.distance.text;
+                const duration = directionsData.duration.text;
+
+                resultContainer.innerText = `Driving distance is ${distance} (${duration}).`;
+            }
+        });
+    }
+    else {
+        resultContainer.innerText = "You need to have two points";
+    }
+}
+
